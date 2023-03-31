@@ -7,6 +7,9 @@ import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
 
 public class KeycloakConfig {
 
@@ -21,7 +24,7 @@ public class KeycloakConfig {
 
     public KeycloakConfig() {
     }
-
+ @Bean
     public static Keycloak getInstance(){
         if(keycloak == null){
             keycloak = KeycloakBuilder.builder()
