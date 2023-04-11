@@ -1,16 +1,27 @@
 package com.example.datamanipulation.entities;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.FieldType;
+import org.springframework.data.mongodb.core.mapping.MongoId;
+
 import javax.persistence.*;
 
-@Entity
-@Table(name = "columns")
+@Document
+@NoArgsConstructor @AllArgsConstructor
+@Data
 public class Column {
-    @Id  @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long Id;
+    @Id
+    Long id;
+
+    String name ;
     int debut;
     int fin;
 
-    @ManyToOne
+    @DBRef
     Bloc bloc;
 
 }
