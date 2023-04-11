@@ -1,18 +1,28 @@
 package com.example.datamanipulation.entities;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.*;
 import java.util.List;
 
-@Entity
-@Table(name = "blocs")
-
+@Document
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
 public class Bloc {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-    @ManyToOne
+    String name ;
+    Long code;
+
+    @DBRef
+    @JsonBackReference
     File file;
 
-    @OneToMany(mappedBy = "bloc")
+    @DBRef
     List<Column> columns;
 }

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="GATEWAY-SERVICE" />
+        <module name="DISCOVERY-SERVICE" />
+        <module name="USER-SERVICE" />
+        <module name="DATA-MANIPULATION" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="DATA-MANIPULATION" target="17" />
+      <module name="DISCOVERY-SERVICE" target="17" />
+      <module name="GATEWAY-SERVICE" target="17" />
+      <module name="USER-MANAGEMENT" target="17" />
+      <module name="USER-SERVICE" target="17" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="DATA-MANIPULATION" options="-parameters" />
+      <module name="DISCOVERY-SERVICE" options="-parameters" />
+      <module name="GATEWAY-SERVICE" options="-parameters" />
+      <module name="USER-MANAGEMENT" options="-parameters" />
+      <module name="USER-SERVICE" options="-parameters" />
+    </option>
+  </component>
+</project>

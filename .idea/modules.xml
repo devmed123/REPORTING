@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/DATA-MANIPULATION/DATA-MANIPULATION.iml" filepath="$PROJECT_DIR$/DATA-MANIPULATION/DATA-MANIPULATION.iml" />
+      <module fileurl="file://$PROJECT_DIR$/DISCOVERY-SERVICE/DISCOVERY-SERVICE.iml" filepath="$PROJECT_DIR$/DISCOVERY-SERVICE/DISCOVERY-SERVICE.iml" />
+      <module fileurl="file://$PROJECT_DIR$/GATEWAY-SERVICE/GATEWAY-SERVICE.iml" filepath="$PROJECT_DIR$/GATEWAY-SERVICE/GATEWAY-SERVICE.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/REPORTING.iml" filepath="$PROJECT_DIR$/.idea/REPORTING.iml" />
+      <module fileurl="file://$PROJECT_DIR$/USER-SERVICE/USER-SERVICE.iml" filepath="$PROJECT_DIR$/USER-SERVICE/USER-SERVICE.iml" />
+    </modules>
+  </component>
+</project>
