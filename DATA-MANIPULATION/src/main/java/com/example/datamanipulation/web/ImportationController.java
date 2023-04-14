@@ -207,13 +207,38 @@ public class ImportationController {
 
 
              Identification identification=new Identification(null,donnees_cles,n_compte_client,reference_externe_utilisation,Code_produit,Code_agence,Code_client,reference_tiers_intervenant,identifiant_nouveau_beneficiaire,numero_LCN,lieu_delivrance,Lieu_paiement_obligation_cautionnée,reference_beneficiaire_preparametre);
-            Identification identification_awb=new Identification(null,donnees_cles,n_compte_client,reference_externe_utilisation,Code_produit,Code_agence,Code_client,reference_tiers_intervenant,identifiant_nouveau_beneficiaire,numero_LCN,lieu_delivrance,Lieu_paiement_obligation_cautionnée,reference_beneficiaire_preparametre);
+            Identification identification_awb;
+             if (identification.getDonnees_cles().contains("S-0001207           001001")){
+                  identification_awb=new Identification(null,donnees_cles,n_compte_client+"ddd",reference_externe_utilisation,Code_produit,Code_agence,Code_client,reference_tiers_intervenant,identifiant_nouveau_beneficiaire,numero_LCN,lieu_delivrance,Lieu_paiement_obligation_cautionnée,reference_beneficiaire_preparametre);
+
+             }
+             else {
+                  identification_awb=new Identification(null,donnees_cles,n_compte_client,reference_externe_utilisation,Code_produit,Code_agence,Code_client,reference_tiers_intervenant,identifiant_nouveau_beneficiaire,numero_LCN,lieu_delivrance,Lieu_paiement_obligation_cautionnée,reference_beneficiaire_preparametre);
+
+             }
 
             if(identification_awb.egale(identification)){
                 identificationsListvalid.add(identification);
             }
             else {
-                identificationsListnotvalid.add(identification);
+                identificationsListnotvalid.add(
+                        new Identification(
+                                null,
+                                identification.getDonnees_cles(),
+                                (identification.getN_compte_client().equals(identification_awb.getN_compte_client())? identification.getN_compte_client() : identification.getN_compte_client()+"  ,     "+identification_awb.getN_compte_client()),
+                                (identification.getReference_externe_utilisation().equals(identification_awb.getReference_externe_utilisation())? identification.getReference_externe_utilisation() : identification.getReference_externe_utilisation()+","+identification_awb.getReference_externe_utilisation()),
+                                (identification.getCode_produit().equals(identification_awb.getCode_produit())? identification.getCode_produit() : identification.getCode_produit()+"    ,      "+identification_awb.getCode_produit()),
+                                (identification.getCode_agence().equals(identification_awb.getCode_agence())? identification.getCode_agence() : identification.getCode_agence()+"     ,         "+identification_awb.getCode_agence()),
+                                (identification.getCode_client().equals(identification_awb.getCode_client())? identification.getCode_client() : identification.getCode_client()+"    ,          "+identification_awb.getCode_client()),
+                                (identification.getReference_tiers_intervenant().equals(identification_awb.getReference_tiers_intervenant())? identification.getReference_tiers_intervenant() : identification.getReference_tiers_intervenant()+"        ,            "+identification_awb.getReference_tiers_intervenant()),
+                                (identification.getIdentifiant_nouveau_beneficiaire().equals(identification_awb.getIdentifiant_nouveau_beneficiaire())? identification.getIdentifiant_nouveau_beneficiaire() : identification.getIdentifiant_nouveau_beneficiaire()+"           ,           "+identification_awb.getIdentifiant_nouveau_beneficiaire()),
+                                (identification.getNumero_LCN().equals(identification_awb.getNumero_LCN())? identification.getNumero_LCN() : identification.getNumero_LCN()+"         ,           "+identification_awb.getNumero_LCN()),
+                                (identification.getLieu_delivrance().equals(identification_awb.getLieu_delivrance())? identification.getLieu_delivrance() : identification.getLieu_delivrance()+"       ,           "+identification_awb.getLieu_delivrance()),
+                                (identification.getLieu_paiement_obligation_cautionnée().equals(identification_awb.getLieu_paiement_obligation_cautionnée())? identification.getLieu_paiement_obligation_cautionnée() : identification.getLieu_paiement_obligation_cautionnée()+"     ,      "+identification_awb.getLieu_paiement_obligation_cautionnée()),
+                                (identification.getReference_beneficiaire_preparametre().equals(identification_awb.getReference_beneficiaire_preparametre())? identification.getReference_beneficiaire_preparametre() : identification.getReference_beneficiaire_preparametre()+"           ,       "+identification_awb.getReference_beneficiaire_preparametre())
+                                )
+                );
+
             }
 
 
@@ -308,7 +333,7 @@ public class ImportationController {
 */
 
         }
-        blocController.exportTableToExcelidentificationvalide(response,identificationsListvalid);
+        blocController.export_identification(response,identificationsListvalid,identificationsListnotvalid);
 
 
       /*  database.getCollection("identifications").bulkWrite(bulkOperationsidentification);
