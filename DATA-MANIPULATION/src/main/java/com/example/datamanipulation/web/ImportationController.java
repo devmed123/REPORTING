@@ -7,11 +7,14 @@ import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.InsertOneModel;
 import com.mongodb.client.model.WriteModel;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -86,7 +89,7 @@ public class ImportationController {
     }
 
     @PostMapping("store")
-    public   Set<String> doss(@RequestParam("file") MultipartFile multipartFile) throws IOException {
+    public   void doss(HttpServletResponse response, @RequestParam("file") MultipartFile multipartFile) throws Exception {
         Set<String> ids = new HashSet<String>();
         List<String> data = new ArrayList<String>();
         InputStream inputStream = multipartFile.getInputStream();
@@ -138,13 +141,50 @@ public class ImportationController {
         String     taux_calcul_commission;
 
         List<String> mydata;
-        List<Identification> identificationsList=new ArrayList<Identification>();
+        List<Identification> identificationsListvalid=new ArrayList<Identification>();
+        List<Identification> identificationsListnotvalid=new ArrayList<Identification>();
+        BlocController blocController=new BlocController();
         MongoClient mongo = new MongoClient( "localhost" , 27017 );
         MongoDatabase database = mongo.getDatabase("ReportinData");
         List<WriteModel<Document>> bulkOperationsidentification = new ArrayList<>();
         List<WriteModel<Document>> bulkOperationsdates = new ArrayList<>();
         List<WriteModel<Document>> bulkOperationsmontants = new ArrayList<>();
         List<WriteModel<Document>> bulkOperationsfinance= new ArrayList<>();
+      /*  response.setContentType("application/vnd.ms-excel");
+
+        response.setHeader("Content-Disposition", "attachment; filename=" + "identification" + ".xlsx");
+        Workbook workbook = new XSSFWorkbook();
+        CreationHelper createHelper = workbook.getCreationHelper();
+
+        Sheet sheet = workbook.createSheet("Table Data");
+
+        Row headerRow = sheet.createRow(0);
+        headerRow.createCell(0).setCellValue("donnees_cles");
+        headerRow.createCell(1).setCellValue("n_compte_client");
+        headerRow.createCell(2).setCellValue("reference_externe_utilisation");
+        headerRow.createCell(3).setCellValue("Code_produit");
+        headerRow.createCell(4).setCellValue("Code_agence");
+        headerRow.createCell(5).setCellValue("Code_client");
+        headerRow.createCell(6).setCellValue("reference_tiers_intervenant");
+        headerRow.createCell(7).setCellValue("identifiant_nouveau_beneficiaire");
+        headerRow.createCell(8).setCellValue("numero_LCN");
+        headerRow.createCell(9).setCellValue("lieu_delivrance");
+        headerRow.createCell(10).setCellValue("Lieu_paiement_obligation_cautionnée");
+        headerRow.createCell(11).setCellValue("reference_beneficiaire_preparametre");
+
+        // Style for header row
+        CellStyle headerCellStyle = workbook.createCellStyle();
+        headerCellStyle.setFillForegroundColor(IndexedColors.LIGHT_BLUE.getIndex());
+
+        Font headerFont = workbook.createFont();
+        headerFont.setColor(IndexedColors.WHITE.getIndex());
+        headerCellStyle.setFont(headerFont);
+
+        // Apply style to header row
+        headerRow.setRowStyle(headerCellStyle);
+
+        // Data rows
+        int rowNumber = 1;*/
         for (String id: ids) {
 
             String[]  table=id.split("split");
@@ -164,8 +204,22 @@ public class ImportationController {
              lieu_delivrance=(data.stream().filter(e->e.substring(134,136).equals("05") && e.substring(223,225).equals("GD")).collect(Collectors.toList()).size()>0) ?data.stream().filter(e->e.substring(134,136).equals("05") && e.substring(223,225).equals("GD")).collect(Collectors.toList()).get(0).substring(332,335):"";
              Lieu_paiement_obligation_cautionnée=(data.stream().filter(e->e.substring(134,136).equals("05") && e.substring(223,225).equals("GD")).collect(Collectors.toList()).size()>0) ?data.stream().filter(e->e.substring(134,136).equals("05") && e.substring(223,225).equals("GD")).collect(Collectors.toList()).get(0).substring(335,338):"";
              reference_beneficiaire_preparametre=(data.stream().filter(e->e.substring(134,136).equals("05") && e.substring(223,225).equals("BF")).collect(Collectors.toList()).size()>0) ?data.stream().filter(e->e.substring(134,136).equals("05") && e.substring(223,225).equals("BF")).collect(Collectors.toList()).get(0).substring(225,231):"";
-             identificationsRepository.save(new Identification(null,donnees_cles,n_compte_client,reference_externe_utilisation,Code_produit,Code_agence,Code_client,reference_tiers_intervenant,identifiant_nouveau_beneficiaire,numero_LCN,lieu_delivrance,Lieu_paiement_obligation_cautionnée,reference_beneficiaire_preparametre));
-             identificationsRepositoryAwb.save(new Identification_awb(null,donnees_cles,n_compte_client,reference_externe_utilisation,Code_produit,Code_agence,Code_client,reference_tiers_intervenant,identifiant_nouveau_beneficiaire,numero_LCN,lieu_delivrance,Lieu_paiement_obligation_cautionnée,reference_beneficiaire_preparametre));
+
+
+             Identification identification=new Identification(null,donnees_cles,n_compte_client,reference_externe_utilisation,Code_produit,Code_agence,Code_client,reference_tiers_intervenant,identifiant_nouveau_beneficiaire,numero_LCN,lieu_delivrance,Lieu_paiement_obligation_cautionnée,reference_beneficiaire_preparametre);
+            Identification identification_awb=new Identification(null,donnees_cles,n_compte_client,reference_externe_utilisation,Code_produit,Code_agence,Code_client,reference_tiers_intervenant,identifiant_nouveau_beneficiaire,numero_LCN,lieu_delivrance,Lieu_paiement_obligation_cautionnée,reference_beneficiaire_preparametre);
+
+            if(identification_awb.egale(identification)){
+                identificationsListvalid.add(identification);
+            }
+            else {
+                identificationsListnotvalid.add(identification);
+            }
+
+
+
+            // Autosize columns
+
             /*Document d_ident=new Document();
             d_ident.append("donnees_cles" ,donnees_cles);
             d_ident.append("n_compte_client", n_compte_client);
@@ -195,8 +249,8 @@ public class ImportationController {
             date_première_perception_accessoire=(data.stream().filter(e->e.substring(134,136).equals("11") && e.substring(229,234).equals("COCAU")).collect(Collectors.toList()).size()>0) ?data.stream().filter(e->e.substring(134,136).equals("11") && e.substring(229,234).equals("COCAU")).collect(Collectors.toList()).get(0).substring(275,285):"";
             date_demande_caution=(data.stream().filter(e->e.substring(134,136).equals("37")).collect(Collectors.toList()).size()>0) ? data.stream().filter(e->e.substring(134,136).equals("37")).collect(Collectors.toList()).get(0).substring(     273,283):"";
 
-            datesRepository.save(new Date_data(null,donnees_cles, date_envoie_offre,date_début_utilisation,date_fin_utilisation, date_échéance_fictive,date_émission_garantie,date_première_perception_accessoire, "",date_demande_caution));
-            datesRepositoryAwb.save(new Date_data_awb(null,donnees_cles, date_envoie_offre,date_début_utilisation,date_fin_utilisation, date_échéance_fictive,date_émission_garantie,date_première_perception_accessoire, "",date_demande_caution));
+          //  datesRepository.save(new Date_data(null,donnees_cles, date_envoie_offre,date_début_utilisation,date_fin_utilisation, date_échéance_fictive,date_émission_garantie,date_première_perception_accessoire, "",date_demande_caution));
+           // datesRepositoryAwb.save(new Date_data_awb(null,donnees_cles, date_envoie_offre,date_début_utilisation,date_fin_utilisation, date_échéance_fictive,date_émission_garantie,date_première_perception_accessoire, "",date_demande_caution));
         /*    d_date.append("donnees_cles" ,donnees_cles);
             d_date.append("date_envoie_offre",date_envoie_offre);
             d_date.append("date_début_utilisation",date_début_utilisation);
@@ -220,8 +274,8 @@ public class ImportationController {
             montant_disponible_global=(data.stream().filter(e->e.substring(134,136).equals("51")).collect(Collectors.toList()).size()>0) ? data.stream().filter(e->e.substring(134,136).equals("51")).collect(Collectors.toList()).get(0).substring(270,288):"";
             code_devise=(data.stream().filter(e->e.substring(134,136).equals("30")).collect(Collectors.toList()).size()>0) ? data.stream().filter(e->e.substring(134,136).equals("30")).collect(Collectors.toList()).get(0).substring(279,282):"";
             montant_GOD_restant=(data.stream().filter(e->e.substring(134,136).equals("05") && e.substring(223,225).equals("GD")).collect(Collectors.toList()).size()>0) ?data.stream().filter(e->e.substring(134,136).equals("05") && e.substring(223,225).equals("GD")).collect(Collectors.toList()).get(0).substring(284,299):"";
-            montantRepository.save(new Montant(null, donnees_cles,montant_autorisation,montant_sous_autorisation,montant_caution,montant_encours_global,montant_disponible_global, code_devise, montant_GOD_restant));
-            montantRepositoryAwb.save(new Montant_awb(null, donnees_cles,montant_autorisation,montant_sous_autorisation,montant_caution,montant_encours_global,montant_disponible_global, code_devise, montant_GOD_restant));
+          //  montantRepository.save(new Montant(null, donnees_cles,montant_autorisation,montant_sous_autorisation,montant_caution,montant_encours_global,montant_disponible_global, code_devise, montant_GOD_restant));
+           // montantRepositoryAwb.save(new Montant_awb(null, donnees_cles,"test",montant_sous_autorisation,montant_caution,montant_encours_global,montant_disponible_global, code_devise, montant_GOD_restant));
            /* d_montant.append("donnees_cles" ,donnees_cles);
             d_montant.append("montant_autorisation",montant_autorisation);
             d_montant.append("montant_sous_autorisation",montant_sous_autorisation);
@@ -254,12 +308,15 @@ public class ImportationController {
 */
 
         }
+        blocController.exportTableToExcelidentificationvalide(response,identificationsListvalid);
+
+
       /*  database.getCollection("identifications").bulkWrite(bulkOperationsidentification);
         database.getCollection("dates").bulkWrite(bulkOperationsdates);
         database.getCollection("montants").bulkWrite(bulkOperationsmontants);
         database.getCollection("financiere").bulkWrite(bulkOperationsfinance);
         bufferReader.close();*/
-        return ids;
+
     }
 
 
