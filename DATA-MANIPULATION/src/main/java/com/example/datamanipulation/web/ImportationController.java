@@ -90,6 +90,7 @@ public class ImportationController {
 
     @PostMapping("store")
     public   void doss(HttpServletResponse response, @RequestParam("file") MultipartFile multipartFile) throws Exception {
+        System.out.println("rrrr");
         Set<String> ids = new HashSet<String>();
         List<String> data = new ArrayList<String>();
         InputStream inputStream = multipartFile.getInputStream();
@@ -144,12 +145,12 @@ public class ImportationController {
         List<Identification> identificationsListvalid=new ArrayList<Identification>();
         List<Identification> identificationsListnotvalid=new ArrayList<Identification>();
         BlocController blocController=new BlocController();
-        MongoClient mongo = new MongoClient( "localhost" , 27017 );
+      /*  MongoClient mongo = new MongoClient( "localhost" , 27017 );
         MongoDatabase database = mongo.getDatabase("ReportinData");
         List<WriteModel<Document>> bulkOperationsidentification = new ArrayList<>();
         List<WriteModel<Document>> bulkOperationsdates = new ArrayList<>();
         List<WriteModel<Document>> bulkOperationsmontants = new ArrayList<>();
-        List<WriteModel<Document>> bulkOperationsfinance= new ArrayList<>();
+        List<WriteModel<Document>> bulkOperationsfinance= new ArrayList<>();*/
       /*  response.setContentType("application/vnd.ms-excel");
 
         response.setHeader("Content-Disposition", "attachment; filename=" + "identification" + ".xlsx");
@@ -190,9 +191,11 @@ public class ImportationController {
             String[]  table=id.split("split");
            mydata =   data.stream().filter(e->e.substring(26,60).equals(table[0]) && e.substring(61,96).equals(table[1]) && e.substring(96,131).equals(table[2])).collect(Collectors.toList());
 
-
+              String dossier=table[0].replaceAll(" ","");
+              String utilisation=table[2].replaceAll(dossier,"").replace(" ","");
            // donnée identification
-             donnees_cles=table[0]+" "+table[1]+" "+table[2];
+             donnees_cles=dossier+"ttt"+utilisation;
+
              n_compte_client=(data.stream().filter(e->e.substring(134,136).equals("04")).collect(Collectors.toList()).size()>0) ? data.stream().filter(e->e.substring(134,136).equals("04")).collect(Collectors.toList()).get(0).substring(244,278):"";
              reference_externe_utilisation=(data.stream().filter(e->e.substring(134,136).equals("37")).collect(Collectors.toList()).size()>0) ?data.stream().filter(e->e.substring(134,136).equals("37")).collect(Collectors.toList()).get(0).substring(306,338):"";
               Code_produit=(data.stream().filter(e->e.substring(134,136).equals("30")).collect(Collectors.toList()).size()>0) ?data.stream().filter(e->e.substring(134,136).equals("30")).collect(Collectors.toList()).get(0).substring(223,228):"";
@@ -208,7 +211,7 @@ public class ImportationController {
 
              Identification identification=new Identification(null,donnees_cles,n_compte_client,reference_externe_utilisation,Code_produit,Code_agence,Code_client,reference_tiers_intervenant,identifiant_nouveau_beneficiaire,numero_LCN,lieu_delivrance,Lieu_paiement_obligation_cautionnée,reference_beneficiaire_preparametre);
             Identification identification_awb;
-             if (identification.getDonnees_cles().contains("S-0001207           001001")){
+             if (identification.getDonnees_cles().contains("S-0001207")){
                   identification_awb=new Identification(null,donnees_cles,n_compte_client+"ddd",reference_externe_utilisation,Code_produit,Code_agence,Code_client,reference_tiers_intervenant,identifiant_nouveau_beneficiaire,numero_LCN,lieu_delivrance,Lieu_paiement_obligation_cautionnée,reference_beneficiaire_preparametre);
 
              }
@@ -225,17 +228,17 @@ public class ImportationController {
                         new Identification(
                                 null,
                                 identification.getDonnees_cles(),
-                                (identification.getN_compte_client().equals(identification_awb.getN_compte_client())? identification.getN_compte_client() : identification.getN_compte_client()+"  ,     "+identification_awb.getN_compte_client()),
-                                (identification.getReference_externe_utilisation().equals(identification_awb.getReference_externe_utilisation())? identification.getReference_externe_utilisation() : identification.getReference_externe_utilisation()+","+identification_awb.getReference_externe_utilisation()),
-                                (identification.getCode_produit().equals(identification_awb.getCode_produit())? identification.getCode_produit() : identification.getCode_produit()+"    ,      "+identification_awb.getCode_produit()),
-                                (identification.getCode_agence().equals(identification_awb.getCode_agence())? identification.getCode_agence() : identification.getCode_agence()+"     ,         "+identification_awb.getCode_agence()),
-                                (identification.getCode_client().equals(identification_awb.getCode_client())? identification.getCode_client() : identification.getCode_client()+"    ,          "+identification_awb.getCode_client()),
-                                (identification.getReference_tiers_intervenant().equals(identification_awb.getReference_tiers_intervenant())? identification.getReference_tiers_intervenant() : identification.getReference_tiers_intervenant()+"        ,            "+identification_awb.getReference_tiers_intervenant()),
-                                (identification.getIdentifiant_nouveau_beneficiaire().equals(identification_awb.getIdentifiant_nouveau_beneficiaire())? identification.getIdentifiant_nouveau_beneficiaire() : identification.getIdentifiant_nouveau_beneficiaire()+"           ,           "+identification_awb.getIdentifiant_nouveau_beneficiaire()),
-                                (identification.getNumero_LCN().equals(identification_awb.getNumero_LCN())? identification.getNumero_LCN() : identification.getNumero_LCN()+"         ,           "+identification_awb.getNumero_LCN()),
-                                (identification.getLieu_delivrance().equals(identification_awb.getLieu_delivrance())? identification.getLieu_delivrance() : identification.getLieu_delivrance()+"       ,           "+identification_awb.getLieu_delivrance()),
-                                (identification.getLieu_paiement_obligation_cautionnée().equals(identification_awb.getLieu_paiement_obligation_cautionnée())? identification.getLieu_paiement_obligation_cautionnée() : identification.getLieu_paiement_obligation_cautionnée()+"     ,      "+identification_awb.getLieu_paiement_obligation_cautionnée()),
-                                (identification.getReference_beneficiaire_preparametre().equals(identification_awb.getReference_beneficiaire_preparametre())? identification.getReference_beneficiaire_preparametre() : identification.getReference_beneficiaire_preparametre()+"           ,       "+identification_awb.getReference_beneficiaire_preparametre())
+                                (identification.getN_compte_client().equals(identification_awb.getN_compte_client())? identification.getN_compte_client() : "LS: "+ identification.getN_compte_client()+"  ,    ACCOR: "+identification_awb.getN_compte_client()),
+                                (identification.getReference_externe_utilisation().equals(identification_awb.getReference_externe_utilisation())? "LS: "+identification.getReference_externe_utilisation() :"ACCOR:"+ identification.getReference_externe_utilisation()+","+identification_awb.getReference_externe_utilisation()),
+                                (identification.getCode_produit().equals(identification_awb.getCode_produit())? identification.getCode_produit() : "LS: "+identification.getCode_produit()+"    ,    ACCOR:   "+identification_awb.getCode_produit()),
+                                (identification.getCode_agence().equals(identification_awb.getCode_agence())? identification.getCode_agence() :"LS: "+ identification.getCode_agence()+"     ,      ACCOR:   "+identification_awb.getCode_agence()),
+                                (identification.getCode_client().equals(identification_awb.getCode_client())? identification.getCode_client() :"LS: " +identification.getCode_client()+"    ,     ACCOR:     "+identification_awb.getCode_client()),
+                                (identification.getReference_tiers_intervenant().equals(identification_awb.getReference_tiers_intervenant())? identification.getReference_tiers_intervenant() :"LS: "+ identification.getReference_tiers_intervenant()+"        ,    ACCOR:        "+identification_awb.getReference_tiers_intervenant()),
+                                (identification.getIdentifiant_nouveau_beneficiaire().equals(identification_awb.getIdentifiant_nouveau_beneficiaire())? identification.getIdentifiant_nouveau_beneficiaire() :"LS: "+ identification.getIdentifiant_nouveau_beneficiaire()+"           ,      ACCOR:     "+identification_awb.getIdentifiant_nouveau_beneficiaire()),
+                                (identification.getNumero_LCN().equals(identification_awb.getNumero_LCN())? identification.getNumero_LCN() :"LS: "+ identification.getNumero_LCN()+"         ,       ACCORD:    "+identification_awb.getNumero_LCN()),
+                                (identification.getLieu_delivrance().equals(identification_awb.getLieu_delivrance())? identification.getLieu_delivrance() : "LS: "+identification.getLieu_delivrance()+"       ,         ACCOR:  "+identification_awb.getLieu_delivrance()),
+                                (identification.getLieu_paiement_obligation_cautionnée().equals(identification_awb.getLieu_paiement_obligation_cautionnée())? identification.getLieu_paiement_obligation_cautionnée() : "LS: "+ identification.getLieu_paiement_obligation_cautionnée()+"       ,         ACCOR:  "+identification_awb.getLieu_paiement_obligation_cautionnée()),
+                                (identification.getReference_beneficiaire_preparametre().equals(identification_awb.getReference_beneficiaire_preparametre())? identification.getReference_beneficiaire_preparametre() :"LS: "+ identification.getReference_beneficiaire_preparametre()+"       ,         ACCOR:  "+identification_awb.getReference_beneficiaire_preparametre())
                                 )
                 );
 
