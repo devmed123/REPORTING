@@ -1,23 +1,17 @@
-package com.example.datamanipulation.entities;
+package com.example.certif.entities;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-
 @Data
-@Entity
+
 @NoArgsConstructor
 @AllArgsConstructor
 public class Identification {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
-    String donnees_cles;
+
+    String N_doss;
+    String N_utilisation;
     String n_compte_client;
     String reference_externe_utilisation;
     String  Code_produit;
@@ -40,7 +34,8 @@ public class Identification {
                 && this.Code_agence.equals(ident.Code_agence)
                 && this.reference_externe_utilisation.equals(ident.reference_externe_utilisation)
                 && this.Code_produit.equals(ident.Code_produit)
-                && this.donnees_cles.equals(ident.donnees_cles)
+                && this.getN_doss().equals(ident.N_doss)
+                && this.getN_utilisation().equals(ident.N_utilisation)
                 && this.n_compte_client.equals(ident.n_compte_client);
 
     }

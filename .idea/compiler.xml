@@ -10,19 +10,17 @@
         <module name="GATEWAY-SERVICE" />
         <module name="DISCOVERY-SERVICE" />
         <module name="USER-SERVICE" />
+        <module name="CERTIF" />
         <module name="DATA-MANIPULATION" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="DATA-MANIPULATION" target="17" />
-      <module name="DISCOVERY-SERVICE" target="17" />
-      <module name="GATEWAY-SERVICE" target="17" />
       <module name="USER-MANAGEMENT" target="17" />
-      <module name="USER-SERVICE" target="17" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="CERTIF" options="-parameters" />
       <module name="DATA-MANIPULATION" options="-parameters" />
       <module name="DISCOVERY-SERVICE" options="-parameters" />
       <module name="GATEWAY-SERVICE" options="-parameters" />
