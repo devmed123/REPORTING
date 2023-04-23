@@ -6,19 +6,15 @@ import com.example.datamanipulation.entities.*;
 import com.example.datamanipulation.repositories.BlocRepository;
 import com.example.datamanipulation.repositories.ColumnRepository;
 import com.example.datamanipulation.repositories.FileRepository;
-import com.mongodb.MongoClient;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoDatabase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import com.mongodb.client.MongoDatabase;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
+
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @RestController
 @RequestMapping("/blocs")
@@ -29,34 +25,21 @@ public class BlocController {
     ColumnRepository columnRepository;
     @Autowired
     BlocRepository blocRepository;
+    @GetMapping("/all")
+    public List<Bloc> blocs(){
+        return blocRepository.findAll().stream().toList();
+    }
+    @Autowired
+    private MongoClient mongoClient;
     @PostMapping("/save_bloc/{file_id}")
     public Bloc save_bloc(@RequestBody Bloc bloc , @PathVariable Long file_id){
-
-        MongoClient mongo = new MongoClient( "localhost" , 27017 );
-        //Connecting to the database
-        MongoDatabase database = mongo.getDatabase("ReportinData");
-        //Creating a collection
-        database.createCollection(bloc.getId().toString());
+        MongoDatabase db = mongoClient.getDatabase("ReportingData");
+         db.createCollection(bloc.getName());
         File f=fileRepository.findById(file_id).get();
-
-        f.getBlocs().add(bloc);
-        Column col1=new Column(1L,"nom", 1,2,null );
-        Column col2=new Column(2L,"prenom", 3,4,null );
-        columnRepository.save(col1);
-        columnRepository.save(col2);
-
-        List<Column> columns=new ArrayList<Column>();
-
-        columns.add(col1);
-        columns.add(col2);
-        bloc.setColumns(columns);
-
+       Bloc b= blocRepository.save(bloc);
+        f.getBlocs().add(b);
         fileRepository.save(f);
-        return   blocRepository.save(bloc);
-
+        return   blocRepository.save(b);
     }
-
-
-
 
 }

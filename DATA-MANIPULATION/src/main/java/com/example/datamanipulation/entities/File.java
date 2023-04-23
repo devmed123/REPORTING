@@ -4,13 +4,12 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.bson.types.ObjectId;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.FieldType;
-import org.springframework.data.mongodb.core.mapping.MongoId;
-
 import javax.persistence.*;
-import javax.persistence.Column;
 import java.util.List;
 
 @Document
@@ -19,7 +18,8 @@ import java.util.List;
 @Data
 public class File {
     @Id
-    Long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    String id;
 
     String name ;
 
@@ -27,5 +27,6 @@ public class File {
     int bloc_in_fin;
     @DBRef
     @JsonManagedReference
+    @OnDelete(action = OnDeleteAction.CASCADE)
     List<Bloc> blocs;
 }

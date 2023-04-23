@@ -15,6 +15,9 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="Etat_certif" target="17" />
+      <module name="Etat_certif.main" target="17" />
+      <module name="Etat_certif.test" target="17" />
       <module name="USER-MANAGEMENT" target="17" />
     </bytecodeTargetLevel>
   </component>
