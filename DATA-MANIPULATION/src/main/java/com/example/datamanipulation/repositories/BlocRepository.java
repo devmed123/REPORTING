@@ -10,7 +10,7 @@ import java.util.List;
 
 
 @RepositoryRestResource
-public interface BlocRepository extends MongoRepository<Bloc,Long> {
+public interface BlocRepository extends MongoRepository<Bloc,String> {
 
     List<Bloc> findByCode(Long code_enregistrement);
 }

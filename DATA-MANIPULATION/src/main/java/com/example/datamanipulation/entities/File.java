@@ -10,6 +10,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Document
@@ -26,7 +27,7 @@ public class File {
     int bloc_id_debut;
     int bloc_in_fin;
     @DBRef
-    @JsonManagedReference
+
     @OnDelete(action = OnDeleteAction.CASCADE)
-    List<Bloc> blocs;
+    List<Bloc> blocs=new ArrayList<Bloc>();
 }

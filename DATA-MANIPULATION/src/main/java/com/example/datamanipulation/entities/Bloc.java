@@ -13,6 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Document
@@ -34,5 +35,5 @@ public class Bloc implements Serializable {
     @DBRef
     @JsonManagedReference
     @OnDelete(action = OnDeleteAction.CASCADE)
-    List<Column> columns;
+    List<Column> columns=new ArrayList<Column>();
 }

@@ -32,10 +32,11 @@ public class BlocController {
     @Autowired
     private MongoClient mongoClient;
     @PostMapping("/save_bloc/{file_id}")
-    public Bloc save_bloc(@RequestBody Bloc bloc , @PathVariable Long file_id){
+    public Bloc save_bloc(@RequestBody Bloc bloc , @PathVariable String file_id){
         MongoDatabase db = mongoClient.getDatabase("ReportingData");
          db.createCollection(bloc.getName());
         File f=fileRepository.findById(file_id).get();
+        bloc.setFile(f);
        Bloc b= blocRepository.save(bloc);
         f.getBlocs().add(b);
         fileRepository.save(f);

@@ -22,11 +22,12 @@ public class ColumnContoller {
     @Autowired
     BlocRepository blocRepository;
     @PostMapping("/save_column/{bloc_id}")
-    public Column save_column(@RequestBody Column column , @PathVariable Long bloc_id){
+    public Column save_column(@RequestBody Column column , @PathVariable String bloc_id){
+       Column c= columnRepository.save(column);
         Bloc b=blocRepository.findById(bloc_id).get();
-        b.getColumns().add(column);
-        column.setBloc(b);
+        b.getColumns().add(c);
+        c.setBloc(b);
         blocRepository.save(b);
-        return  columnRepository.save(column);
+        return  columnRepository.save(c);
     }
 }

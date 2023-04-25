@@ -6,7 +6,7 @@ import com.example.datamanipulation.repositories.*;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.internal.MongoClientImpl;
+
 import com.mongodb.client.model.InsertOneModel;
 import com.mongodb.client.model.WriteModel;
 
@@ -32,7 +32,7 @@ public class ImportationController {
     BlocRepository blocRepository;
 
     @PostMapping("store/{file_id}")
-    public   List<String> upload(@RequestParam("file") MultipartFile multipartFile, @PathVariable int file_id) throws IOException {
+    public   List<String> upload(@RequestParam("file") MultipartFile multipartFile, @PathVariable String file_id) throws IOException {
         List<String> lines = new ArrayList<String>();
         InputStream inputStream = multipartFile.getInputStream();
         BufferedReader bufferReader =   new BufferedReader(new InputStreamReader(inputStream));
@@ -41,7 +41,7 @@ public class ImportationController {
             lines.add(line);
         }
         bufferReader.close();
-        File f= fileRepository.findById((long) file_id).get();
+        File f= fileRepository.findById( file_id).get();
 
              MongoDatabase db = mongoClient.getDatabase("ReportingData");
         List< InsertOneModel<Document>> list=new ArrayList< >();
@@ -52,11 +52,12 @@ public class ImportationController {
            if(f.getBlocs()
                    .stream()
                    .filter(bl -> bl.getCode().equals(Long.valueOf( code)))
-                   .collect(Collectors.toList()).size()>0){
+                   .toList().size()>0){
+               System.out.println(code);
                 b =f.getBlocs()
                        .stream()
                        .filter(bl -> bl.getCode().equals(Long.valueOf( code)))
-                       .collect(Collectors.toList()).get(0);
+                       .toList().get(0);
                if(b!=null){
                    Document document = new Document();
                    document.append("bloc",b.getName());
@@ -65,7 +66,7 @@ public class ImportationController {
                        String  val=e.substring(c.getDebut()-1,c.getFin()-1);
                        document.append(c.getName(),val);
                    }
-                   db.getCollection(b.getName()).insertOne(document);
+
                    InsertOneModel<Document> doc = new InsertOneModel<>(document);
                    list.add(doc);
 
@@ -77,7 +78,9 @@ public class ImportationController {
        });
         for (Bloc  b:f.getBlocs()){
             List<WriteModel<Document>> bulkOperations = new ArrayList<>();
-            list.stream().filter(e->e.getDocument().get("bloc").equals(b.getName())).forEach(e->bulkOperations.add(e));
+            list.stream().filter(e->e.getDocument().get("bloc").equals(b.getName())).forEach(e->{bulkOperations.add(e);
+                System.out.println(e.getDocument().get("NDOSS"));
+            });
             db.getCollection(b.getName()).bulkWrite(bulkOperations);
         }
        //
