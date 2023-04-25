@@ -47,7 +47,8 @@ public class ImportationController {
         List< InsertOneModel<Document>> list=new ArrayList< >();
 
        lines.forEach(e->{
-           String  code=e.substring(f.getBloc_id_debut()-1,f.getBloc_in_fin()-1);
+           String  code=e.substring(f.getBloc_id_debut()-1,f.getBloc_in_fin());
+           System.out.println(code);
            Bloc b;
            if(f.getBlocs()
                    .stream()
@@ -64,7 +65,10 @@ public class ImportationController {
                    for (Column c:
                            b.getColumns()) {
                        String  val=e.substring(c.getDebut()-1,c.getFin()-1);
-                       document.append(c.getName(),val);
+                       if(!val.replaceAll(" ","").equals("")){
+                           document.append(c.getName(),val);
+
+                       }
                    }
 
                    InsertOneModel<Document> doc = new InsertOneModel<>(document);
