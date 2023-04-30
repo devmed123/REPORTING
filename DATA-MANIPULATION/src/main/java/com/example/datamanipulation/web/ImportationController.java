@@ -5,6 +5,7 @@ import com.example.datamanipulation.entities.File;
 import com.example.datamanipulation.repositories.*;
 
 import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
 import com.mongodb.client.model.InsertOneModel;
@@ -18,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/data")
@@ -30,7 +30,12 @@ public class ImportationController {
     FileRepository fileRepository;
     @Autowired
     BlocRepository blocRepository;
-
+   @GetMapping("/get/{bloc_id}")
+   public List<Document> getData(@PathVariable String bloc_id){
+       Bloc b=blocRepository.findById(bloc_id).get();
+       MongoDatabase db = mongoClient.getDatabase("ReportingData");
+      return (List<Document>) db.getCollection(b.getName()).find();
+   }
     @PostMapping("store/{file_id}")
     public   List<String> upload(@RequestParam("file") MultipartFile multipartFile, @PathVariable String file_id) throws IOException {
         List<String> lines = new ArrayList<String>();
@@ -48,7 +53,7 @@ public class ImportationController {
 
        lines.forEach(e->{
            String  code=e.substring(f.getBloc_id_debut()-1,f.getBloc_in_fin());
-           System.out.println(code);
+
            Bloc b;
            if(f.getBlocs()
                    .stream()
